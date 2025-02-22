@@ -2,7 +2,7 @@ import sys
 import subprocess
 import tempfile
 import os
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QFileDialog, QPushButton, QVBoxLayout, QLineEdit, QTextEdit, QGridLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QFileDialog, QPushButton, QVBoxLayout, QLineEdit, QTextEdit, QGridLayout, QHBoxLayout
 from PyQt5.QtGui import QColor, QIcon
 from PyQt5 import QtWidgets
 
@@ -10,7 +10,9 @@ class MyWindow(QWidget):
     def __init__(self):
         super(MyWindow, self).__init__()
         self.lexerOutput = None
+        self.parserOutput = None
         self.lexerOutputLabel = None
+        self.parserOutputLabel = None
         self.clearButton = None
         self.runButton = None
         self.saveButton = None
@@ -29,7 +31,7 @@ class MyWindow(QWidget):
         self.layout = QVBoxLayout()
 
         # input file browse section
-        self.inBrowseButton = QPushButton('Browse .cpp file')
+        self.inBrowseButton = QPushButton('Browse file')
         self.inBrowseButton.setStyleSheet("""
             QPushButton{
                 background-color: #007acc; /* Blue */
@@ -127,19 +129,30 @@ class MyWindow(QWidget):
         self.layout.addWidget(self.saveButton)
         self.saveButton.clicked.connect(self.save_file)
 
-        # lexer output
+        # lexer and parser output
         self.lexerOutputLabel = QLabel('Lexer Output:', self)
-        self.layout.addWidget(self.lexerOutputLabel)
+        self.parserOutputLabel = QLabel('Parser Output:', self)
         self.lexerOutput = QTextEdit()
+        self.parserOutput = QTextEdit()
         self.lexerOutput.setTextColor(QColor(0, 0, 0))  # Set text color to black
-        self.layout.addWidget(self.lexerOutput)
+        self.parserOutput.setTextColor(QColor(0, 0, 0))  # Set text color to black
+
+        outputLayout = QHBoxLayout()
+        outputLayout.addWidget(self.lexerOutputLabel)
+        outputLayout.addWidget(self.parserOutputLabel)
+        self.layout.addLayout(outputLayout)
+
+        outputLayout = QHBoxLayout()
+        outputLayout.addWidget(self.lexerOutput)
+        outputLayout.addWidget(self.parserOutput)
+        self.layout.addLayout(outputLayout)
 
         self.setLayout(self.layout)
 
     def browse_file(self):
         qfd = QFileDialog()
         path = "/"
-        filter_ = "cpp(*.cpp)"
+        filter_ = "All files (*)"
         self.file = QFileDialog.getOpenFileName(qfd, "", path, filter_)[0]
         self.inFileBox.setText(self.file)
         self.saveButton.setEnabled(False)
@@ -151,6 +164,7 @@ class MyWindow(QWidget):
 
     def run(self):
         self.lexerOutput.setPlainText("")
+        self.parserOutput.setPlainText("")
         try:
             if self.file:
                 with open(self.file, 'r') as file:
@@ -158,15 +172,18 @@ class MyWindow(QWidget):
             else:
                 code = self.sourceCodeInput.toPlainText()
 
-            lexer_output = self.process_code(code)
+            lexer_output, parser_output = self.process_code(code)
             self.lexerOutput.setPlainText(lexer_output)
+            self.parserOutput.setPlainText(parser_output)
         except Exception as e:
             self.lexerOutput.setPlainText(f"Error: {str(e)}")
+            self.parserOutput.setPlainText(f"Error: {str(e)}")
 
     def clear(self):
         self.inFileBox.clear()
         self.sourceCodeInput.clear()
         self.lexerOutput.clear()
+        self.parserOutput.clear()
         self.file = ""
         self.saveButton.setEnabled(False)
 
@@ -195,7 +212,7 @@ class MyWindow(QWidget):
                 executable_path = os.path.join(build_dir, executable_name)
 
             if not os.path.exists(executable_path):
-                return "Error: Executable not found in the build directories."
+                return "Error: Executable not found in the build directories.", ""
 
             if self.file:
                 # Use the original file if selected
@@ -209,9 +226,11 @@ class MyWindow(QWidget):
 
             stdout, stderr = process.communicate()
             output = stdout.decode() + stderr.decode()
-            return output
+            lexer_output = output  # Assuming lexer output is part of the stdout
+            parser_output = output  # Assuming parser output is part of the stdout
+            return lexer_output, parser_output
         except Exception as e:
-            return f"Error: {str(e)}"
+            return f"Error: {str(e)}", f"Error: {str(e)}"
 
 f = open("styles.css", "r")
 stylesheet = f.read()
