@@ -201,33 +201,32 @@ class MyWindow(QWidget):
 
     def process_code(self, code):
         try:
-            # Determine the path to the executable
-            build_dir = "../build"  # Recommended build directory
-            executable_name = "PARSER_GUI_SAMPLE1"
-            executable_path = os.path.join(build_dir, executable_name)
+            # Paths to the executables
+            build_dir = "../cmake-build-debug"
+            lexer_executable = os.path.join(build_dir, "LEXER")
+            parser_executable = os.path.join(build_dir, "PARSER_GUI_SAMPLE1")
 
-            if not os.path.exists(executable_path):
-                # Fallback to the cmake-build-debug directory if the executable is not found
-                build_dir = "../cmake-build-debug"
-                executable_path = os.path.join(build_dir, executable_name)
-
-            if not os.path.exists(executable_path):
-                return "Error: Executable not found in the build directories.", ""
+            if not os.path.exists(lexer_executable) or not os.path.exists(parser_executable):
+                return "Error: One or both executables not found in the build directories.", ""
 
             if self.file:
                 # Use the original file if selected
-                process = subprocess.Popen([executable_path, self.file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                lexer_process = subprocess.Popen([lexer_executable, self.file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                parser_process = subprocess.Popen([parser_executable, self.file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             else:
                 # Use a temporary file if no file is selected
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".cpp") as temp_file:
                     temp_file.write(code.encode())
                     temp_file.flush()
-                    process = subprocess.Popen([executable_path, temp_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    lexer_process = subprocess.Popen([lexer_executable, temp_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    parser_process = subprocess.Popen([parser_executable, temp_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            stdout, stderr = process.communicate()
-            output = stdout.decode() + stderr.decode()
-            lexer_output = output  # Assuming lexer output is part of the stdout
-            parser_output = output  # Assuming parser output is part of the stdout
+            lexer_stdout, lexer_stderr = lexer_process.communicate()
+            parser_stdout, parser_stderr = parser_process.communicate()
+
+            lexer_output = lexer_stdout.decode() + lexer_stderr.decode()
+            parser_output = parser_stdout.decode() + parser_stderr.decode()
+
             return lexer_output, parser_output
         except Exception as e:
             return f"Error: {str(e)}", f"Error: {str(e)}"
