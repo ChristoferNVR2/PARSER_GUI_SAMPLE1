@@ -102,7 +102,7 @@ To run the application using Docker, follow these steps:
 - `gui/`: Contains the Python GUI code.
 - `res/`: Contains additional resources such as sample source files.
 - `build/`: Directory for building the C++ lexer and parser.
-- 
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
