@@ -1,13 +1,14 @@
 # PARSER_GUI_SAMPLE1
 
-This project is a parser for C++ code with a graphical user interface (GUI) built using Python and C++. The lexer tokenizes C++ source code and displays the tokens in a GUI.
+This project is a parser for a simple language with basic operations, featuring a graphical user interface (GUI) built using Python and C++. The lexer tokenizes the source code and displays the tokens in a GUI.
 
 ## Features
 
-- Tokenizes C++ source code
+- Tokenizes source code of a simple language
 - Displays tokens in a GUI
 - Supports file input and direct code input
 - Provides options to run, clear, and save the code
+- Executes two different projects and displays their outputs in separate text areas
 
 ## Requirements
 
@@ -97,10 +98,11 @@ To run the application using Docker, follow these steps:
 - `src/`: Contains the C++ source code for the parser.
 - `flex/`: Contains the Flex lexer definition file.
 - `bison/`: Contains the Bison parser definition file.
+- `lexer/`: Contains the C++ source code for the lexer.
 - `gui/`: Contains the Python GUI code.
-- `res/`: Contains additional resources such as sample C++ files and images.
-- `build/`: Directory for building the C++ parser.
-
+- `res/`: Contains additional resources such as sample source files.
+- `build/`: Directory for building the C++ lexer and parser.
+- 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
