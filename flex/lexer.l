@@ -14,7 +14,7 @@ letter  [a-zA-Z]
 id      {letter}({letter}|{digit})*
 int     {digit}+
 float   {digit}+"."{digit}+
-whitespace [ \t\r\n]
+whitespace [ \t\r]
 
 %%
 
@@ -31,6 +31,8 @@ whitespace [ \t\r\n]
 ";"         { return SEMICOLON; }
 
 {whitespace}+    ;  // Ignore whitespace
+
+"\n"        { yylineno++; }
 
 .           { showError("lexical error"); exit(1); }
 
