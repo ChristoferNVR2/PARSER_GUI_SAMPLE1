@@ -166,11 +166,7 @@ class MyWindow(QWidget):
         self.lexerOutput.setPlainText("")
         self.parserOutput.setPlainText("")
         try:
-            if self.file:
-                with open(self.file, 'r') as file:
-                    code = file.read()
-            else:
-                code = self.sourceCodeInput.toPlainText()
+            code = self.sourceCodeInput.toPlainText()
 
             lexer_output, parser_output = self.process_code(code)
             self.lexerOutput.setPlainText(lexer_output)
@@ -200,6 +196,7 @@ class MyWindow(QWidget):
             self.saveButton.setEnabled(True)
 
     def process_code(self, code):
+        print(code)
         try:
             # Paths to the executables
             build_dir = "../cmake-build-debug"
@@ -209,17 +206,12 @@ class MyWindow(QWidget):
             if not os.path.exists(lexer_executable) or not os.path.exists(parser_executable):
                 return "Error: One or both executables not found in the build directories.", ""
 
-            if self.file:
-                # Use the original file if selected
-                lexer_process = subprocess.Popen([lexer_executable, self.file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                parser_process = subprocess.Popen([parser_executable, self.file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            else:
-                # Use a temporary file if no file is selected
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".cpp") as temp_file:
-                    temp_file.write(code.encode())
-                    temp_file.flush()
-                    lexer_process = subprocess.Popen([lexer_executable, temp_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    parser_process = subprocess.Popen([parser_executable, temp_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".cpp") as temp_file:
+                temp_file.write(code.encode())
+                temp_file.flush()
+                lexer_process = subprocess.Popen([lexer_executable, temp_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                parser_process = subprocess.Popen([parser_executable, temp_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             lexer_stdout, lexer_stderr = lexer_process.communicate()
             parser_stdout, parser_stderr = parser_process.communicate()
