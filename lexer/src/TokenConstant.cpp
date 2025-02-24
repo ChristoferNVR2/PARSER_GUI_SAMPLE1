@@ -107,8 +107,6 @@ const char* TokenConstantToString(const TokenConstant tokenType) {
         case TokenConstant::TOKEN_STRING_LITERAL: return "TOKEN_STRING_LITERAL";
         case TokenConstant::TOKEN_CHAR_LITERAL: return "TOKEN_CHAR_LITERAL";
         case TokenConstant::TOKEN_IDENTIFIER: return "TOKEN_IDENTIFIER";
-        case TokenConstant::TOKEN_COMMENT_SINGLE_LINE: return "TOKEN_COMMENT_SINGLE_LINE";
-        case TokenConstant::TOKEN_COMMENT_MULTI_LINE: return "TOKEN_COMMENT_MULTI_LINE";
         case TokenConstant::TOKEN_EOF: return "TOKEN_EOF";
         case TokenConstant::UNKNOWN: return "UNKNOWN";
         default: return "ERROR";

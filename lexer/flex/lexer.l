@@ -129,8 +129,8 @@ WS         [ \t\r]+
 
 {ID}           { return new Token(TokenConstant::TOKEN_IDENTIFIER, yytext); }
 
-{COMMENT1}     { return new Token(TokenConstant::TOKEN_COMMENT_SINGLE_LINE, yytext); }
-{COMMENT2}     { return new Token(TokenConstant::TOKEN_COMMENT_MULTI_LINE, yytext); }
+{COMMENT1}     { /* ignore */ }
+{COMMENT2}     { /* ignore */ }
 
 \n             { yylineno++; }
 
