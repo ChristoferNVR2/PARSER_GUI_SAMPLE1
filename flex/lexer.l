@@ -7,6 +7,9 @@
 void showError(const char* s);
 %}
 
+COMMENT1   "//".*
+COMMENT2   "/\*".*?"\*/"
+
 %option noyywrap
 
 digit   [0-9]
@@ -50,6 +53,9 @@ whitespace [ \t\r]
 {whitespace}+    ;  // Ignore whitespace
 
 "\n"        { yylineno++; }
+
+{COMMENT1}     { /* ignore */ }
+{COMMENT2}     { /* ignore */ }
 
 .           { showError("lexical error"); exit(1); }
 
